@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>Admin — Products</h3>
+<p>
+  <a class="btn btn-success" href="{{ url_for('admin_add') }}">Add Product</a>
+  <a class="btn btn-secondary" href="{{ url_for('seed') }}">Seed Sample Data</a>
+  <a class="btn btn-outline-danger" href="{{ url_for('admin_logout') }}">Logout</a>
+</p>
+
+<table class="table table-striped">
+  <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Actions</th></tr></thead>
+  <tbody>
+    {% for p in products %}
+      <tr>
+        <td style="width:120px"><img src="{{ p.image_url() }}" alt="" style="height:60px;object-fit:cover"></td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.category.name if p.category else '-' }}</td>
+        <td>{% if p.price %}₹ {{ '%.0f'|format(p.price) }}{% else %}-{% endif %}</td>
+        <td>
+          <a class="btn btn-sm btn-outline-primary" href="{{ url_for('product_detail', id=p.id) }}">View</a>
+          <a class="btn btn-sm btn-warning" href="{{ url_for('admin_edit', id=p.id) }}">Edit</a>
+          <form method="post" action="{{ url_for('admin_delete', id=p.id) }}" style="display:inline" onsubmit="return confirm('Delete this product?');">
+            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+          </form>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="5">No products yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

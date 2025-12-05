@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h3>{{ 'Edit Product' if product else 'Add Product' }}</h3>
+<form method="post" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input class="form-control" name="name" value="{{ product.name if product else '' }}" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Price</label>
+    <input class="form-control" name="price" value="{{ '%.2f'|format(product.price) if product and product.price is not none else '' }}">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Category</label>
+    <select class="form-select" name="category">
+      <option value="">-- none --</option>
+      {% for c in categories %}
+        <option value="{{ c.id }}" {% if product and product.category_id == c.id %}selected{% endif %}>{{ c.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Description</label>
+    <textarea class="form-control" name="description" rows="4">{{ product.description if product else '' }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Image</label>
+    <input class="form-control" type="file" name="image" accept="image/*">
+    {% if product and product.image_filename %}
+      <img src="{{ product.image_url() }}" style="max-width:200px;margin-top:8px">
+    {% endif %}
+  </div>
+  <button class="btn btn-primary" type="submit">{{ 'Update' if product else 'Add' }}</button>
+  <a class="btn btn-secondary" href="{{ url_for('admin_list') }}">Cancel</a>
+</form>
+{% endblock %}

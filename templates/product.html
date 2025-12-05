@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+  <div class="col-md-6">
+    <img src="{{ product.image_url() }}" alt="{{ product.name }}" class="img-fluid" style="object-fit:cover;max-height:480px">
+  </div>
+  <div class="col-md-6">
+    <h2>{{ product.name }}</h2>
+    {% if product.price %}<h4>₹ {{ '%.0f'|format(product.price) }}</h4>{% endif %}
+    <p class="text-muted">Category: {{ product.category.name if product.category else '—' }}</p>
+
+    {% set specs = product.specs_dict() %}
+    {% if specs %}
+      <h5>Specifications</h5>
+      <ul>
+      {% for k, v in specs.items() %}
+        <li><strong>{{ k }}:</strong> {{ v }}</li>
+      {% endfor %}
+      </ul>
+    {% endif %}
+
+    <p>{{ product.description or "No description available." }}</p>
+
+    <p><a class="btn btn-primary" href="tel:{{ shop_phone }}">Call to Order</a> <a class="btn btn-outline-secondary" href="{{ url_for('index') }}">Back</a></p>
+
+    {% if session.get('is_admin') %}
+      <a class="btn btn-secondary" href="{{ url_for('admin_edit', id=product.id) }}">Edit</a>
+      <form method="post" action="{{ url_for('admin_delete', id=product.id) }}" style="display:inline" onsubmit="return confirm('Delete this product?');">
+        <button class="btn btn-danger" type="submit">Delete</button>
+      </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
